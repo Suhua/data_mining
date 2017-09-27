@@ -13,7 +13,7 @@ def main(argv):
         print cols
 
         # select the attributes
-        atts = ['GeographyKey','Title','MaritalStatus',
+        atts = ['GeographyKey','Title','MaritalStatus', 'Gender',
         'YearlyIncome','TotalChildren', 'NumberChildrenAtHome','EnglishEducation',
         'SpanishEducation','FrenchEducation','EnglishOccupation','SpanishOccupation','FrenchOccupation',
         'HouseOwnerFlag','NumberCarsOwned','CommuteDistance', 'Region', 'Age', 'BikeBuyer']
@@ -26,9 +26,9 @@ def main(argv):
         del cols, df
         
         # take a look of of the uniqe values in each selected attributes and spot the missing value
-        for att in cols:
+        for att in atts:
             print att + ' : '
-            print set([x for x in df.loc[:, att].values.tolist()])
+            print set([x for x in data.loc[:, att].values.tolist()])
 
     except Exception as e:
         print str(e)

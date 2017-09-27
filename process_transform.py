@@ -9,8 +9,6 @@ import  scipy.spatial.distance as sd
 
 plt.style.use('ggplot')
 
-
-
 def main(argv):
     if(len(argv) < 2):
         print 'usage :$python process_tranform.py filename'
@@ -26,7 +24,6 @@ def main(argv):
     # remove Null value and merge same string with the same meaning
     df['Title'] = df['Title'].replace({np.NAN:'unknown'})
     df['Title'] = df['Title'].replace({'Ms':'Ms.'})
-
     print df['Title']
 
 
@@ -35,17 +32,12 @@ def main(argv):
     print 'Display random sampling'
     print df.sample(5)
 
-
-
-
-
     # Ordinal numeric: YearlyIncome ,  TotalChildren,  NumberChildrenAtHome, NumberCarsOwned 
     # Variance and Standard Deviation for ordinal attributes
     ordinal_atts = ['YearlyIncome',  'TotalChildren',  'NumberChildrenAtHome', 'NumberCarsOwned', 'Age']
     ordinal_df = df.loc[:, ordinal_atts]
 
-   
-    # # get variance
+    # get variance
     print '\nget variance for ordinal attributes\n'
     
     for att in ordinal_atts:
@@ -72,11 +64,14 @@ def main(argv):
     bins[1] = [10000, 30000, 50000, 70000, 90000, 110000, 130000, 150000, 170000]
     group_names = [['30', '40', '50', '60', '70', '80', '90', '100'],
      ['10000', '30000', '50000', '70000', '90000', '11000', '13000', '15000+']]
+    
 
+    #create a subplot fig
     fig, axe = plt.subplots(nrows = 2, ncols = 1)
     idx = 0
     for att in numeric_atts:
         bin_name = att + '_' + 'bins'
+        # use cut to create binning values
         discrete_df[bin_name] = pd.cut(discrete_df[att], bins[idx], labels = group_names[idx])
 
         # display value counts
@@ -94,9 +89,9 @@ def main(argv):
 
 
     plt.savefig('HistogramPlot.png')
-  
+
+
     # Normalization ['YearlyIncome']
-    
     num_df = df[ordinal_atts]
     min_max_scaler = sp.MinMaxScaler()
     np_scaled = min_max_scaler.fit_transform(num_df)
@@ -106,7 +101,7 @@ def main(argv):
         print '\nprint before and after Normalization'
         print df[att].head(10), df_normalized[idx].head(10)
         idx += 1
-
+    
     # Standardlization 
     data = df[ordinal_atts].as_matrix()
     scaler = sp.StandardScaler().fit(data)
@@ -121,12 +116,6 @@ def main(argv):
     print '\n Standardlization'
     print std_df
 
-    # for att in ordinal_atts:
-    #     print '\n'
-    #     data = df[att].as_matrix()
-      
-   
-
     # Binarization (One Hot Encoding)
     categorical_atts = ['Gender', 'Title', 'MaritalStatus',
     'EnglishEducation', 'SpanishEducation', 'SpanishEducation',
@@ -134,17 +123,21 @@ def main(argv):
     'FrenchOccupation', 'HouseOwnerFlag', 'NumberCarsOwned', 'CommuteDistance','Region']
     
     categorical_df = df[categorical_atts]
+
+    #convert strings values to numerical values, for example: att = ['low', 'medium', 'high']
+    #converted to att = [0,1,2]
     le = sp.LabelEncoder()
     categorical_df_1 = categorical_df.apply(le.fit_transform)
     print 'print LabelEncoder'
     print categorical_df_1.head()
+
+    #create One hot encoding
     enc = sp.OneHotEncoder()
     enc_scaler = enc.fit(categorical_df_1)
     onehotlabels =  enc.transform(categorical_df_1).toarray()
+
     print 'print one hot Encoding result'
     print onehotlabels[:,:10]
-    
-    
    
     # Test Hamming dissimilarity & Jaccard Similarity
     vect_1 = [0, 1, 0, 1, 0, 1, 0, 0, 1]
@@ -152,9 +145,7 @@ def main(argv):
 
     hamming_dissimilarity = sd.hamming(vect_1, vect_2)
     print 'hamming_dissimilarity score for test data is    ' + str(hamming_dissimilarity)
-    print 'Jaccard_SIM score for test data is    ' + str(Jaccard_SIM(vect_1, vect_2))
-
-    
+    print 'Jaccard_SIM score for test data is    ' + str(Jaccard_SIM(vect_1, vect_2)) 
     
     # print results from my transforming data
     vect_1 = onehotlabels[10, :]
@@ -172,26 +163,6 @@ def Jaccard_SIM(vect_1, vect_2):
             if vect_1[i] == vect_2[i]:
                 total_match +=1
     return 1.0*total_match/total_non_zeros
-
-
-
-    #Jaccard Similarity
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
